@@ -1,0 +1,146 @@
+# Heilbronn problem in the unit right triangle: split-and-certify with Gurobi (size-limited pip licence) or SCIP.
+# Start it from the GitHub "Actions" tab -> "heilbronn-certify" -> "Run workflow".
+name: heilbronn-certify
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "Number of points (validate with 8 first, then 9)"
+        default: "8"
+      target:
+        description: "Prove that every case has upper bound <= target. n=8: 0.03389799608776131   n=9: 0.027426211734693878"
+        default: "0.03389799608776131"
+      split:
+        description: "JSON list of triangles whose orientation is split on (2^d parts). n=8: [[2,3,4],[2,3,5],[2,3,6],[2,3,7]]  n=9: add [2,3,8]"
+        default: "[[2,3,4],[2,3,5],[2,3,6],[2,3,7]]"
+      parts:
+        description: "JSON list of part indices to run (all of 0..2^d-1 for a full proof)"
+        default: "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]"
+      prefix:
+        description: "JSON list of already-fixed orientations (only when refining an unresolved part; else [])"
+        default: "[]"
+      run_vertices:
+        description: "Also run the 'all three corners occupied' case (needed once per n for a complete proof)"
+        type: boolean
+        default: true
+      hours:
+        description: "Solver time limit per job in hours (GitHub-hosted jobs stop at 6 h)"
+        default: "5.5"
+      solver:
+        description: "gurobi or scip"
+        default: "gurobi"
+      runner:
+        description: "Runner label (ubuntu-latest, or a larger-runner label if your organisation has one)"
+        default: "ubuntu-latest"
+
+permissions:
+  contents: write   # lets the summary job save results to the 'results' branch
+
+jobs:
+  boundary:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 358
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        part: ${{ fromJSON(inputs.parts) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install solver
+        run: |
+          python -m pip install --upgrade pip
+          if [ "${{ inputs.solver }}" = "gurobi" ]; then pip install "gurobipy>=13,<14"; else pip install pyscipopt; fi
+      - name: Solve part ${{ matrix.part }}
+        run: |
+          SECS=$(python -c "print(int(float('${{ inputs.hours }}')*3600))")
+          python heil_tri.py --n ${{ inputs.n }} --case boundary --cutoff ${{ inputs.target }} \
+            --split '${{ inputs.split }}' --part ${{ matrix.part }} --prefix '${{ inputs.prefix }}' \
+            --solver ${{ inputs.solver }} --threads $(nproc) --timelimit $SECS \
+            --out result_boundary_${{ matrix.part }}.json | tee solver_${{ matrix.part }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-boundary-${{ matrix.part }}
+          path: |
+            result_boundary_${{ matrix.part }}.json
+            solver_${{ matrix.part }}.log
+
+  vertices:
+    if: ${{ inputs.run_vertices }}
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 358
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install solver
+        run: |
+          python -m pip install --upgrade pip
+          if [ "${{ inputs.solver }}" = "gurobi" ]; then pip install "gurobipy>=13,<14"; else pip install pyscipopt; fi
+      - name: Solve the corners-occupied case
+        run: |
+          SECS=$(python -c "print(int(float('${{ inputs.hours }}')*3600))")
+          python heil_tri.py --n ${{ inputs.n }} --case vertices --cutoff ${{ inputs.target }} \
+            --solver ${{ inputs.solver }} --threads $(nproc) --timelimit $SECS \
+            --out result_vertices_0.json | tee solver_vertices.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-vertices
+          path: |
+            result_vertices_0.json
+            solver_vertices.log
+
+  summary:
+    needs: [boundary, vertices]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Summarise
+        run: |
+          python summarize.py results --md summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: |
+            summary.md
+            results
+      - name: Save results to the 'results' branch (readable by a Claude cloud session with git)
+        run: |
+          set -e
+          D="results/run-${{ github.run_number }}-n${{ inputs.n }}"
+          mkdir -p "/tmp/save/$D"
+          cp -r results/. "/tmp/save/$D/"
+          cp summary.md "/tmp/save/$D/"
+          rm -rf results summary.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin results || true
+            if git rev-parse --verify -q origin/results >/dev/null; then
+              git checkout -f -B results origin/results
+            else
+              git checkout -f --orphan results
+              git rm -rf -q . || true
+            fi
+            mkdir -p results
+            cp -r /tmp/save/results/. results/
+            git add results
+            git commit -q -m "Results of run ${{ github.run_number }} (n=${{ inputs.n }})" || true
+            if git push origin results; then break; fi
+            sleep $((attempt * 10))
+          done
