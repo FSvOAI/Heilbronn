@@ -16,7 +16,8 @@ It only calls heil_tri.py with the same arguments run_parts.sh uses (no change t
   * regions are processed lowest bound first; results go to DIR/<node>/result_boundary_<p>.json (+ log_<p>.txt, node.json);
   * a region with every orientation fixed gets one run of --leaf-secs; if that fails it is reported as left open
     (the driver then does not claim that everything was proved);
-  * create DIR/STOP to stop after the current solver run; re-running the script resumes (existing results are reused).
+  * create DIR/STOP (or pass --max-minutes) to stop after the current solver run; re-running the script resumes
+    (existing results are reused).
 Split and prefix strings are written in compact JSON (no spaces), like every other run in this project.
 """
 import argparse, hashlib, heapq, itertools, json, os, subprocess, sys, time
@@ -77,7 +78,14 @@ def main():
     ap.add_argument('--near', type=float, default=1.02)
     ap.add_argument('--leaf-secs', type=int, default=1800, help='time for a region with every orientation fixed')
     ap.add_argument('--heil', default='/home/user/heil')
+    ap.add_argument('--max-minutes', type=float, default=0,
+                    help='stop like a STOP file once this much wall time has passed (0 = no limit); re-run to resume')
     a = ap.parse_args()
+    t_start = time.time()
+    stop_file = os.path.join(a.out, 'STOP')
+
+    def should_stop():
+        return os.path.exists(stop_file) or (a.max_minutes > 0 and time.time() - t_start > 60 * a.max_minutes)
     os.makedirs(a.out, exist_ok=True)
     under = {(tuple(t), int(s)) for t, s in json.loads(a.under)}
     heap, count, missing = [], itertools.count(), []
@@ -96,8 +104,8 @@ def main():
     proved = runs = 0
     left_open = []          # regions that could not be split and were not proved: reported at the end
     for parent, split, part, region in missing:
-        if os.path.exists(os.path.join(a.out, 'STOP')):
-            log(a.out, 'STOP file found while running missing pieces; re-run to resume'); return 1
+        if should_stop():
+            log(a.out, 'STOP file or time limit reached while running missing pieces; re-run to resume'); return 1
         r = solve(a.heil, a.out, parent, split, part, a.piece_secs); runs += 1
         if r.get('verdict') == 'PROVED':
             proved += 1
@@ -108,8 +116,8 @@ def main():
     if missing:
         log(a.out, f'missing pieces done: total runs {runs}, proved {proved}, open regions {len(heap)}')
     while heap:
-        if os.path.exists(os.path.join(a.out, 'STOP')):
-            log(a.out, f'STOP file found: {len(heap)} region(s) still open; re-run to resume')
+        if should_stop():
+            log(a.out, f'STOP file or time limit reached: {len(heap)} region(s) still open; re-run to resume')
             return 1
         ratio, _, region, long_tried = heapq.heappop(heap)
         if ratio <= a.near and not long_tried:
@@ -132,9 +140,9 @@ def main():
                        f'left open: {canon(region)}'); continue
         opened = 0
         for p in range(2 ** len(split)):
-            if os.path.exists(os.path.join(a.out, 'STOP')):
+            if should_stop():
                 heapq.heappush(heap, (ratio, next(count), region, long_tried))
-                log(a.out, f'STOP file found mid-region; it will be redone on resume (finished pieces are reused)')
+                log(a.out, f'STOP file or time limit reached mid-region; it will be redone on resume (finished pieces are reused)')
                 return 1
             r = solve(a.heil, a.out, region, split, p, a.piece_secs); runs += 1
             v = r.get('verdict')
