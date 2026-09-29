@@ -10,7 +10,7 @@ Set parameter NonConvex to value 2
 Set parameter BestBdStop to value 2.7426211734693878e-02
 Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
 
-CPU model: Intel(R) Xeon(R) Processor @ 2.80GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
 Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
 
 Non-default parameters:
@@ -36,7 +36,7 @@ Coefficient statistics:
   RHS range        [1e+00, 1e+00]
 
 Found heuristic solution: objective -0.0000000
-Presolve time: 0.00s
+Presolve time: 0.01s
 Presolved: 329 rows, 100 columns, 1114 nonzeros
 Presolved model has 50 bilinear constraint(s)
 
@@ -82,7 +82,7 @@ H    9    12                       0.0000000    0.06671      -  23.0    0s
 *  663   594              85       0.0000000    0.06559      -  17.5    0s
 *  768   647             107       0.0000001    0.06559      -  16.3    0s
 H 1188   923                       0.0000002    0.06289      -  17.0    0s
-H 1191   878                       0.0000003    0.06289      -  17.0    0s
+H 1191   878                       0.0000003    0.06289      -  17.0    1s
 * 1823  1258              99       0.0000007    0.04755      -  19.0    1s
 * 1849  1203              97       0.0000009    0.04755      -  18.8    1s
 * 1851  1163              97       0.0000009    0.04755      -  18.8    1s
@@ -93,4 +93,7 @@ H 1191   878                       0.0000003    0.06289      -  17.0    0s
 * 2586  1417              99       0.0000015    0.04282      -  18.2    1s
 * 2587  1379              98       0.0000019    0.04282      -  18.2    1s
 * 2597  1344              98       0.0000020    0.04282      -  18.2    1s
- 14739  9202    0.02446   25   52    0.00000    0.03793      -  22.7    5s
+ 22874 14340     cutoff   59         0.00000    0.03665      -  23.7    5s
+ 50370 31422     cutoff   59         0.00000    0.03471      -  25.1   10s
+ 80284 48858     cutoff   64         0.00000    0.03357      -  25.0   15s
+ 109263 66523    0.00015   51   18    0.00000    0.03301      -  25.3   20s
