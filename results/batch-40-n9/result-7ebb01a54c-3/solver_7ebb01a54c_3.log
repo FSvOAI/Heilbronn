@@ -1,0 +1,93 @@
+Set parameter NodefileStart to value 6
+Read parameters from file gurobi.env
+Restricted license - for non-production use only - expires 2027-11-29
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 4
+Set parameter TimeLimit to value 360
+Set parameter MIPGap to value 5e-05
+Set parameter MIPFocus to value 2
+Set parameter NonConvex to value 2
+Set parameter BestBdStop to value 2.7426211734693878e-02
+Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.5 LTS")
+
+CPU model: AMD EPYC 7763 64-Core Processor, instruction set [SSE2|AVX|AVX2]
+Thread count: 2 physical cores, 4 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  360
+BestBdStop  2.7426211734693878e-02
+MIPGap  5e-05
+MIPFocus  2
+NodefileStart  6
+NonConvex  2
+Threads  4
+
+Optimize a model with 117 rows, 87 columns and 630 nonzeros (Max)
+Model fingerprint: 0xad618a5b
+Model has 1 linear objective coefficients
+Model has 50 quadratic constraints
+Variable types: 65 continuous, 22 integer (22 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-01, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Found heuristic solution: objective -0.0000000
+Presolve time: 0.00s
+Presolved: 317 rows, 88 columns, 1030 nonzeros
+Presolved model has 50 bilinear constraint(s)
+
+Solving non-convex MIQCP to global optimality
+
+Variable types: 66 continuous, 22 integer (22 binary)
+Root relaxation presolve removed 50 rows and 1 columns
+Root relaxation presolved: 267 rows, 87 columns, 980 nonzeros
+
+
+Root relaxation: objective 7.142857e-02, 102 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    0.07143    0   44   -0.00000    0.07143      -     -    0s
+     0     0    0.06221    0   47   -0.00000    0.06221      -     -    0s
+     0     0    0.06221    0   44   -0.00000    0.06221      -     -    0s
+     0     0    0.06208    0   46   -0.00000    0.06208      -     -    0s
+     0     0    0.06178    0   45   -0.00000    0.06178      -     -    0s
+     0     0    0.06091    0   44   -0.00000    0.06091      -     -    0s
+     0     2    0.06091    0   44   -0.00000    0.06091      -     -    0s
+*  556   454              79       0.0000000    0.06091      -  22.5    0s
+H  940   759                       0.0000001    0.06084      -  20.7    0s
+* 1041   839              87       0.0000001    0.06084      -  19.9    0s
+H 1217   870                       0.0000002    0.06084      -  20.6    0s
+* 1809  1115              82       0.0000003    0.06084      -  20.1    1s
+H 1922  1138                       0.0000003    0.06084      -  20.6    1s
+H 1937  1093                       0.0000003    0.06084      -  20.9    1s
+H 1953  1050                       0.0000003    0.06084      -  21.1    1s
+H 3551  1954                       0.0000003    0.05000      -  24.2    1s
+H 3761  2089                       0.0000004    0.05000      -  23.5    1s
+H 3918  2112                       0.0000004    0.05000      -  23.3    2s
+* 8733  5221              67       0.0000006    0.04081      -  20.2    2s
+ 17225 10876    0.01621   31   50    0.00000    0.03693      -  19.5    5s
+ 37386 24136     cutoff   68         0.00000    0.03267      -  19.4   10s
+
+Cutting planes:
+  Gomory: 1
+  Implied bound: 2
+  MIR: 1
+  Flow cover: 14
+  RLT: 42
+  Relax-and-lift: 3
+  BQP: 22
+
+Explored 62890 nodes (1215315 simplex iterations) in 14.90 seconds (13.76 work units)
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 5.87715e-07 4.48117e-07 3.94684e-07 ... 2.72609e-08
+
+Optimization achieved user objective limit
+Best objective 5.877152012431e-07, best bound 2.740224570806e-02, gap -
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 14.89874815940857, "objval": 5.877152012430566e-07, "objbound": 0.027402245708062687, "binaries": 22}
