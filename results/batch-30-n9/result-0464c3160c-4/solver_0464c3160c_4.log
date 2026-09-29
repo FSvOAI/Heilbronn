@@ -1,0 +1,133 @@
+Set parameter NodefileStart to value 6
+Read parameters from file gurobi.env
+Restricted license - for non-production use only - expires 2027-11-29
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 4
+Set parameter TimeLimit to value 360
+Set parameter MIPGap to value 5e-05
+Set parameter MIPFocus to value 2
+Set parameter NonConvex to value 2
+Set parameter BestBdStop to value 2.7426211734693878e-02
+Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.5 LTS")
+
+CPU model: AMD EPYC 7763 64-Core Processor, instruction set [SSE2|AVX|AVX2]
+Thread count: 2 physical cores, 4 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  360
+BestBdStop  2.7426211734693878e-02
+MIPGap  5e-05
+MIPFocus  2
+NodefileStart  6
+NonConvex  2
+Threads  4
+
+Optimize a model with 141 rows, 111 columns and 810 nonzeros (Max)
+Model fingerprint: 0x5a8f88ff
+Model has 1 linear objective coefficients
+Model has 50 quadratic constraints
+Variable types: 65 continuous, 46 integer (46 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-01, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Found heuristic solution: objective -0.0000000
+Presolve time: 0.00s
+Presolved: 341 rows, 112 columns, 1210 nonzeros
+Presolved model has 50 bilinear constraint(s)
+
+Solving non-convex MIQCP to global optimality
+
+Variable types: 66 continuous, 46 integer (46 binary)
+Found heuristic solution: objective 0.0000000
+Root relaxation presolve removed 50 rows and 1 columns
+Root relaxation presolved: 291 rows, 111 columns, 1160 nonzeros
+
+
+Root relaxation: objective 8.333333e-02, 133 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    0.08333    0   43    0.00000    0.08333      -     -    0s
+     0     0    0.07143    0   53    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   51    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   53    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   53    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   61    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   43    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   45    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   51    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   55    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   52    0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   52    0.00000    0.07143      -     -    0s
+     0     2    0.07143    0   52    0.00000    0.07143      -     -    0s
+H 1135   913                       0.0000000    0.07143      -  21.3    0s
+H 1222   935                       0.0000000    0.07143      -  21.9    1s
+H 2031  1473                       0.0000004    0.05096      -  18.4    1s
+H 2068  1216                       0.0025214    0.05096  1921%  18.2    1s
+* 2130  1146             137       0.0035109    0.05096  1351%  17.8    1s
+H 2676  1340                       0.0038523    0.05096  1223%  23.1    1s
+H 3559  1644                       0.0038523    0.05096  1223%  24.9    2s
+H 4571  2167                       0.0052879    0.05096   864%  28.6    2s
+H 5413  2324                       0.0059940    0.05096   750%  30.4    2s
+H 5896  2695                       0.0061586    0.05096   727%  30.7    2s
+H 5927  2271                       0.0086883    0.05096   486%  30.5    2s
+H 6127  2249                       0.0086883    0.05096   486%  30.8    2s
+H 7625  3046                       0.0086883    0.04990   474%  33.0    3s
+H 8001  3141                       0.0086883    0.04900   464%  33.2    3s
+H 8568  3377                       0.0086883    0.04812   454%  33.2    3s
+H 8762  3477                       0.0086885    0.04774   449%  33.3    4s
+H11243  4558                       0.0086886    0.04572   426%  34.2    4s
+ 12062  4918    0.01075   28   50    0.00869    0.04528   421%  34.3    5s
+ 29443 11683    0.03587   34   57    0.00869    0.04030   364%  35.4   10s
+ 50248 19320    0.02113   36   47    0.00869    0.03810   338%  35.0   15s
+H70845 26414                       0.0086887    0.03642   319%  34.6   19s
+ 71858 26696    0.01953   37   52    0.00869    0.03638   319%  34.5   20s
+H73532 27290                       0.0086889    0.03628   318%  34.5   20s
+H76971 28446                       0.0086890    0.03610   316%  34.4   21s
+ 89704 33025    0.01485   35   47    0.00869    0.03532   306%  34.2   25s
+ 112667 40801     cutoff   40         0.00869    0.03424   294%  33.8   30s
+ 131120 47050    0.01237   41   52    0.00869    0.03361   287%  33.6   35s
+ 153211 54273     cutoff   43         0.00869    0.03290   279%  33.4   40s
+ 176189 61576 infeasible   37         0.00869    0.03228   271%  33.1   45s
+ 198002 68201    0.02109   37   53    0.00869    0.03183   266%  32.9   50s
+ 220876 75111    0.01178   43   51    0.00869    0.03138   261%  32.7   55s
+ 243822 81924     cutoff   41         0.00869    0.03095   256%  32.5   60s
+ 266154 88689    0.00886   43   45    0.00869    0.03060   252%  32.3   65s
+ 287501 94740    0.01860   40   40    0.00869    0.03028   249%  32.2   70s
+ 306705 100640     cutoff   37         0.00869    0.03002   246%  32.1   75s
+ 329008 107152 infeasible   40         0.00869    0.02973   242%  32.0   80s
+ 351707 114088    0.01956   33   40    0.00869    0.02948   239%  31.9   85s
+ 373883 120260    0.02146   31   53    0.00869    0.02923   236%  31.8   90s
+ 396863 126613    0.01025   38   52    0.00869    0.02898   234%  31.6   95s
+ 419866 133479    0.02276   32   50    0.00869    0.02876   231%  31.6  100s
+ 442470 139794    0.02571   34   52    0.00869    0.02854   229%  31.5  105s
+ 465887 146548    0.00922   41   49    0.00869    0.02830   226%  31.4  110s
+ 486028 151928     cutoff   38         0.00869    0.02813   224%  31.3  115s
+ 508468 157998    0.02409   32   49    0.00869    0.02794   222%  31.3  120s
+ 532006 164373    0.01303   37   51    0.00869    0.02776   219%  31.2  125s
+ 555304 170722    0.01958   33   53    0.00869    0.02758   217%  31.1  130s
+ 578634 177297    0.00904   33   43    0.00869    0.02743   216%  31.1  135s
+
+Cutting planes:
+  Gomory: 7
+  Implied bound: 19
+  MIR: 2
+  Flow cover: 17
+  RLT: 62
+  Relax-and-lift: 2
+  BQP: 15
+
+Explored 579534 nodes (18003867 simplex iterations) in 135.14 seconds (144.43 work units)
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 0.00868898 0.00868863 0.00868855 ... 0.00351087
+
+Optimization achieved user objective limit
+Best objective 8.688981820021e-03, best bound 2.742524499669e-02, gap 215.6324%
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 135.13784289360046, "objval": 0.008688981820021424, "objbound": 0.027425244996694624, "binaries": 46}
