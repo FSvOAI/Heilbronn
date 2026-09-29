@@ -1,0 +1,97 @@
+Set parameter NodefileStart to value 6
+Read parameters from file gurobi.env
+Restricted license - for non-production use only - expires 2027-11-29
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 4
+Set parameter TimeLimit to value 60
+Set parameter MIPGap to value 5e-05
+Set parameter MIPFocus to value 2
+Set parameter NonConvex to value 2
+Set parameter BestBdStop to value 2.7426211734693878e-02
+Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  60
+BestBdStop  2.7426211734693878e-02
+MIPGap  5e-05
+MIPFocus  2
+NodefileStart  6
+NonConvex  2
+Threads  4
+
+Optimize a model with 121 rows, 91 columns and 658 nonzeros (Max)
+Model fingerprint: 0x7cfe1b1e
+Model has 1 linear objective coefficients
+Model has 50 quadratic constraints
+Variable types: 65 continuous, 26 integer (26 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-01, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Found heuristic solution: objective -0.0000000
+Presolve time: 0.00s
+Presolved: 321 rows, 92 columns, 1058 nonzeros
+Presolved model has 50 bilinear constraint(s)
+
+Solving non-convex MIQCP to global optimality
+
+Variable types: 66 continuous, 26 integer (26 binary)
+Found heuristic solution: objective 0.0000000
+Root relaxation presolve removed 50 rows and 1 columns
+Root relaxation presolved: 271 rows, 91 columns, 1008 nonzeros
+
+
+Root relaxation: objective 1.000000e-01, 126 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    0.10000    0   46    0.00000    0.10000      -     -    0s
+     0     0    0.08333    0   52    0.00000    0.08333      -     -    0s
+     0     0    0.07692    0   55    0.00000    0.07692      -     -    0s
+     0     0    0.07692    0   53    0.00000    0.07692      -     -    0s
+     0     0    0.07692    0   57    0.00000    0.07692      -     -    0s
+     0     0    0.07692    0   57    0.00000    0.07692      -     -    0s
+     0     0    0.07692    0   57    0.00000    0.07692      -     -    0s
+     0     2    0.07692    0   57    0.00000    0.07692      -     -    0s
+H   65    82                       0.0000002    0.07692      -  23.9    0s
+*  678   654             100       0.0000003    0.07692      -  26.7    0s
+*  775   696             106       0.0000004    0.07353      -  26.4    0s
+H 1249   993                       0.0000005    0.06927      -  28.2    0s
+H 2300  1415                       0.0000006    0.05755      -  26.9    1s
+H 3298  1859                       0.0000010    0.05557      -  31.3    1s
+ 25011 17160    0.00351   38   44    0.00000    0.04300      -  24.5    5s
+ 57948 39617    0.01997   26   50    0.00000    0.03911      -  23.9   10s
+ 95897 65737    0.01548   36   44    0.00000    0.03782      -  24.2   15s
+ 133935 91389    0.00002   75   31    0.00000    0.03663      -  24.1   20s
+ 170270 116563    0.00021   57   50    0.00000    0.03587      -  24.0   25s
+ 210572 143811    0.00025   43   50    0.00000    0.03524      -  23.6   30s
+ 246751 169055    0.00101   53   50    0.00000    0.03471      -  23.5   35s
+ 281943 193943 infeasible   45         0.00000    0.03434      -  23.4   40s
+ 320264 220460    0.00928   38   44    0.00000    0.03393      -  23.4   45s
+ 356481 244356    0.00037   47   37    0.00000    0.03357      -  23.4   50s
+ 395514 270905    0.00011   39   38    0.00000    0.03328      -  23.3   55s
+ 429449 293122    0.00001   66   36    0.00000    0.03301      -  23.2   60s
+
+Cutting planes:
+  Gomory: 6
+  Flow cover: 5
+  RLT: 43
+  Relax-and-lift: 1
+  BQP: 9
+
+Explored 429456 nodes (9977806 simplex iterations) in 60.00 seconds (80.78 work units)
+Thread count was 4 (of 4 available processors)
+
+Solution count 8: 9.53796e-07 6.22257e-07 5.30308e-07 ... -0
+
+Time limit reached
+Best objective 9.537963206032e-07, best bound 3.300857613825e-02, gap -
+{"verdict": "UNRESOLVED", "status": "TIME_LIMIT", "runtime": 60.00155210494995, "objval": 9.53796320603238e-07, "objbound": 0.033008576138254524, "binaries": 26}
