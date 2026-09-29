@@ -10,7 +10,7 @@ Set parameter NonConvex to value 2
 Set parameter BestBdStop to value 2.7426211734693878e-02
 Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
 
-CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+CPU model: Intel(R) Xeon(R) Processor @ 2.80GHz, instruction set [SSE2|AVX|AVX2|AVX512]
 Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
 
 Non-default parameters:
@@ -66,3 +66,25 @@ Root relaxation: objective 7.142857e-02, 116 iterations, 0.00 seconds (0.00 work
      0     0    0.02971    0   54   -0.00000    0.02971      -     -    0s
      0     2    0.02971    0   54   -0.00000    0.02971      -     -    0s
 *  322   301              45       0.0000000    0.02933      -  28.1    0s
+*  503   467              69       0.0000001    0.02906      -  23.4    1s
+*  505   467              70       0.0000001    0.02906      -  23.4    1s
+H  838   720                       0.0000002    0.02860      -  21.6    1s
+H 1252   959                       0.0000002    0.02860      -  19.8    2s
+H 1255   913                       0.0000005    0.02860      -  19.7    2s
+
+Cutting planes:
+  Gomory: 3
+  Lift-and-project: 1
+  Implied bound: 2
+  Flow cover: 1
+  RLT: 39
+  BQP: 1
+
+Explored 1255 nodes (25758 simplex iterations) in 2.12 seconds (0.73 work units)
+Thread count was 4 (of 4 available processors)
+
+Solution count 7: 4.90438e-07 1.88915e-07 1.5107e-07 ... -0
+
+Optimization achieved user objective limit
+Best objective 4.904380787457e-07, best bound 2.332740156256e-02, gap -
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 2.117173194885254, "objval": 4.904380787457142e-07, "objbound": 0.0233274015625568, "binaries": 34}
