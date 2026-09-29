@@ -3,7 +3,7 @@ Read parameters from file gurobi.env
 Restricted license - for non-production use only - expires 2027-11-29
 Set parameter OutputFlag to value 1
 Set parameter Threads to value 4
-Set parameter TimeLimit to value 60
+Set parameter TimeLimit to value 300
 Set parameter MIPGap to value 5e-05
 Set parameter MIPFocus to value 2
 Set parameter NonConvex to value 2
@@ -14,7 +14,7 @@ CPU model: Intel(R) Xeon(R) Processor @ 2.80GHz, instruction set [SSE2|AVX|AVX2|
 Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
 
 Non-default parameters:
-TimeLimit  60
+TimeLimit  300
 BestBdStop  2.7426211734693878e-02
 MIPGap  5e-05
 MIPFocus  2
@@ -69,17 +69,16 @@ Root relaxation: objective 1.000000e-01, 100 iterations, 0.00 seconds (0.00 work
 H 3114  1674                       0.0000012    0.04711      -  28.0    1s
 H10778  6973                       0.0000017    0.04031      -  29.6    3s
  17933 11289    0.00000   48   29    0.00000    0.03713      -  29.1    5s
- 41989 24062    0.00074   42   51    0.00000    0.03343      -  27.5   10s
- 67317 38175    0.00466   42   38    0.00000    0.03193      -  26.4   15s
- 93163 53675    0.01570   33   52    0.00000    0.03103      -  25.8   20s
- 111796 65046    0.01933   31   50    0.00000    0.03051      -  25.6   25s
- 128886 74942    0.00875   35   43    0.00000    0.03002      -  25.3   30s
- 143738 83552    0.00592   39   38    0.00000    0.02971      -  25.3   35s
- 169251 97681    0.00353   36   44    0.00000    0.02917      -  25.0   40s
- 196083 113056     cutoff   39         0.00000    0.02869      -  24.8   45s
- 222950 129048    0.00124   44   50    0.00000    0.02826      -  24.6   50s
- 246656 142602     cutoff   43         0.00000    0.02791      -  24.7   55s
- 270813 156749    0.00016   55   42    0.00000    0.02757      -  24.6   60s
+ 42353 24302    0.00001   67   44    0.00000    0.03343      -  27.4   10s
+ 65733 37239    0.00284   39   38    0.00000    0.03196      -  26.5   15s
+ 91598 52911    0.00085   55   38    0.00000    0.03109      -  25.8   20s
+ 115326 67048    0.02907   32   52    0.00000    0.03041      -  25.5   25s
+ 134763 78128    0.01677   33   45    0.00000    0.02987      -  25.2   30s
+ 159036 92093    0.00009   61   50    0.00000    0.02940      -  25.2   35s
+ 184725 106697    0.00256   36   50    0.00000    0.02891      -  24.9   40s
+ 208807 120368    0.02294   26   42    0.00000    0.02848      -  24.7   45s
+ 236460 136970    0.00019   61   31    0.00000    0.02803      -  24.7   50s
+ 261534 151020    0.01359   36   51    0.00000    0.02768      -  24.7   55s
 
 Cutting planes:
   Gomory: 5
@@ -89,11 +88,11 @@ Cutting planes:
   RLT: 47
   BQP: 10
 
-Explored 270888 nodes (6662125 simplex iterations) in 60.00 seconds (67.55 work units)
+Explored 280666 nodes (6882774 simplex iterations) in 58.88 seconds (69.66 work units)
 Thread count was 4 (of 4 available processors)
 
 Solution count 7: 1.67185e-06 1.24349e-06 1.08996e-06 ... -0
 
-Time limit reached
-Best objective 1.671854345719e-06, best bound 2.756809967219e-02, gap 1648853.4356%
-{"verdict": "UNRESOLVED", "status": "TIME_LIMIT", "runtime": 60.002166986465454, "objval": 1.6718543457189293e-06, "objbound": 0.027568099672187565, "binaries": 22}
+Optimization achieved user objective limit
+Best objective 1.671854345719e-06, best bound 2.742533214282e-02, gap 1640313.9639%
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 58.885024070739746, "objval": 1.6718543457189293e-06, "objbound": 0.027425332142822046, "binaries": 22}
