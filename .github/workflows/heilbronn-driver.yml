@@ -1,0 +1,321 @@
+# Heilbronn problem in the unit right triangle: refine open regions with the split-until-proved driver, one region per job.
+# Companion of heilbronn.yml and heilbronn-batch.yml (same heil_tri.py model, same result files, same 'results' branch).
+# Each job runs tools/split_until_proved.py on its region for up to "hours": it splits the region on the next 4 candidate
+# triangles, solves the 16 pieces for "piece_secs" seconds each, and keeps splitting open pieces, lowest bound first.
+# Install: add this file as .github/workflows/heilbronn-driver.yml and the driver as tools/split_until_proved.py.
+# Start:   GitHub "Actions" tab -> "heilbronn-driver" -> "Run workflow".
+# Results: branch 'results', folder results/driver-<run number>-n<n>/<region id>/ (result_*.json, node.json, progress.log;
+#          the per-solve logs are only in the run's artifacts).
+name: heilbronn-driver
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "Number of points"
+        default: "9"
+      target:
+        description: "Prove that every piece has upper bound <= target. n=9: 0.027426211734693878"
+        default: "0.027426211734693878"
+      nodes:
+        description: 'JSON list of regions, e.g. [{"prefix":[[[2,3,4],1],[[2,3,5],0]]}]; one job per region'
+        default: "[]"
+      hours:
+        description: "Wall-time budget of the driver per job in hours (at most 5)"
+        default: "4"
+      piece_secs:
+        description: "Solver time limit per piece in seconds (the driver default is 60)"
+        default: "60"
+      runner:
+        description: "Linux runner label: ubuntu-latest, ubuntu-24.04 or ubuntu-22.04"
+        default: "ubuntu-latest"
+
+permissions:
+  contents: write   # lets the summary job save results to the 'results' branch (plan and solve are read-only)
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      n: ${{ steps.plan.outputs.n }}
+      target: ${{ steps.plan.outputs.target }}
+      runner: ${{ steps.plan.outputs.runner }}
+      minutes: ${{ steps.plan.outputs.minutes }}
+      piece_secs: ${{ steps.plan.outputs.piece_secs }}
+      timeout: ${{ steps.plan.outputs.timeout }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check inputs and list the jobs
+        id: plan
+        shell: python
+        env:
+          IN_N: ${{ inputs.n }}
+          IN_TARGET: ${{ inputs.target }}
+          IN_NODES: ${{ inputs.nodes }}
+          IN_HOURS: ${{ inputs.hours }}
+          IN_PIECE: ${{ inputs.piece_secs }}
+          IN_RUNNER: ${{ inputs.runner }}
+        run: |
+          import hashlib, json, math, os, re, secrets, sys
+
+          MAX_JOBS = 256   # GitHub's limit for one job matrix
+          MAX_SPLIT = 6    # at most 2^6 = 64 parts per region
+          # Linux x64 GitHub-hosted runners only: the solve steps need bash and GNU nproc (no macOS,
+          # no Windows), and an unknown label would leave every job waiting for a runner that never comes.
+          # To use a larger Linux runner of your organisation, add its exact label to this list.
+          RUNNERS = ('ubuntu-latest', 'ubuntu-24.04', 'ubuntu-22.04')
+
+          def fail(msg):
+              # One line, escaped as GitHub requires, so user text cannot fake a workflow command.
+              msg = msg.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title=Invalid input::{msg}')
+              sys.exit(1)
+
+          def show(value, limit=150):
+              # Quote user text for error messages (json.dumps keeps it on one line).
+              s = json.dumps(value)
+              return s if len(s) <= limit else s[:limit] + '...'
+
+          def env(name):
+              return os.environ.get(name, '').strip()
+
+          def number(name, label):
+              s = env(name)
+              try:
+                  v = float(s)
+              except ValueError:
+                  fail(f'{label} must be a number, got {show(s)}')
+              if not math.isfinite(v):
+                  fail(f'{label} must be a finite number, got {show(s)}')
+              return v
+
+          # ---- simple inputs
+          s = env('IN_N')
+          if not re.fullmatch(r'[0-9]{1,3}', s):
+              fail(f'n must be a whole number, got {show(s)}')
+          n = int(s)
+          if not 4 <= n <= 12:
+              fail(f'n must be between 4 and 12, got {n}')
+          target = number('IN_TARGET', 'target')
+          if not 0 < target < 0.5:
+              fail(f'target must be between 0 and 0.5, got {target!r}')
+          hours = number('IN_HOURS', 'hours')
+          if not 0 < hours <= 5:
+              fail(f'hours must be more than 0 and at most 5, got {hours!r}')
+          piece = number('IN_PIECE', 'piece_secs')
+          if not 5 <= piece <= 1800:
+              fail(f'piece_secs must be between 5 and 1800, got {piece!r}')
+          runner = env('IN_RUNNER')
+          if runner not in RUNNERS:
+              fail(f'runner must be one of {", ".join(RUNNERS)} (a larger Linux runner must first be '
+                   f'added to RUNNERS in the workflow file), got {show(runner)}')
+
+          # ---- nodes
+          def no_duplicate_keys(pairs):
+              keys = [k for k, _ in pairs]
+              if len(set(keys)) != len(keys):
+                  fail(f'nodes: a JSON object repeats a key: {show(keys)}')
+              return dict(pairs)
+
+          try:
+              nodes = json.loads(env('IN_NODES'), object_pairs_hook=no_duplicate_keys)
+          except (ValueError, RecursionError) as e:
+              fail(f'nodes is not valid JSON ({type(e).__name__}: {e})')
+          if not isinstance(nodes, list) or not nodes:
+              fail('nodes must be a non-empty JSON list of {"prefix": [...], "split": [...]} objects')
+
+          def triangle(v, where):
+              # [i, j, k] with 0 <= i < j < k < n; heil_tri.py silently ignores unsorted triples.
+              if not (isinstance(v, list) and len(v) == 3 and all(type(a) is int for a in v)):
+                  fail(f'{where}: a triangle must be a list of 3 whole numbers, got {show(v)}')
+              i, j, k = v
+              if not 0 <= i < j < k < n:
+                  fail(f'{where}: triangle {show(v)} must be sorted, without repeats, using points 0..{n - 1}')
+              # Set T+ of heil_tri.py (boundary case): always positive, so fixing or splitting it does nothing.
+              if k <= 3 or (i, j) == (0, 1):
+                  fail(f'{where}: triangle {show(v)} is always positive in the boundary case (set T+); do not fix or split it')
+              return (i, j, k)
+
+          # tools/split_until_proved.py is the n = 9 driver, with the n = 9 target built in
+          if n != 9 or target != 0.027426211734693878:
+              fail(f'this workflow runs only n = 9 with target 0.027426211734693878, got n = {n}, target = {target!r}')
+          MAX_JOBS = 256
+          jobs, seen = [], {}
+          for num, node in enumerate(nodes, 1):
+              where = f'node {num}'
+              if not isinstance(node, dict) or sorted(node) != ['prefix']:
+                  fail(f'{where}: must be an object with exactly one key "prefix", got {show(node)}')
+              if not isinstance(node['prefix'], list) or not node['prefix']:
+                  fail(f'{where}: prefix must be a non-empty list, got {show(node["prefix"])}')
+              prefix = []
+              for entry in node['prefix']:
+                  if not (isinstance(entry, list) and len(entry) == 2):
+                      fail(f'{where}: each prefix entry must look like [[i,j,k], 0 or 1], got {show(entry)}')
+                  t = triangle(entry[0], f'{where} prefix')
+                  sign = entry[1]
+                  if type(sign) is not int or sign not in (0, 1):
+                      fail(f'{where}: prefix sign must be 0 or 1, got {show(sign)}')
+                  prefix.append((t, sign))
+              if len({t for t, _ in prefix}) != len(prefix):
+                  fail(f'{where}: the prefix fixes the same triangle more than once')
+              compact = lambda v: json.dumps(v, separators=(',', ':'))
+              key = compact(sorted([list(t), sg] for t, sg in prefix))
+              node_id = hashlib.sha256(key.encode()).hexdigest()[:10]
+              if node_id in seen:
+                  fail(f'{where} is the same region as node {seen[node_id]}; remove one of them')
+              seen[node_id] = num
+              # two regions where one contains the other would be refined twice
+              for other in jobs:
+                  a, b = set(prefix), {(tuple(t), s) for t, s in json.loads(other['prefix'])}
+                  if a <= b or b <= a:
+                      fail(f'{where} and the region of job {other["id"]} overlap (one prefix contains the other)')
+              jobs.append({'id': node_id, 'prefix': compact([[list(t), sg] for t, sg in prefix])})
+          if len(jobs) > MAX_JOBS:
+              fail(f'too many regions: {len(jobs)} (at most {MAX_JOBS} per run)')
+
+          minutes = int(hours * 60)
+          # driver budget + one last piece (at most 600 s, see --leaf-secs and --long-secs) + setup
+          timeout = min(358, minutes + max(10, math.ceil(piece / 60)) + 40)
+          outputs = {'matrix': json.dumps(jobs, separators=(',', ':')), 'n': str(n), 'target': repr(target),
+                     'runner': runner, 'minutes': str(minutes), 'piece_secs': str(int(piece)), 'timeout': str(timeout)}
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              for name, value in outputs.items():
+                  delim = 'EOF_' + secrets.token_hex(16)
+                  assert delim not in value
+                  f.write(f'{name}<<{delim}\n{value}\n{delim}\n')
+          msg = f'### Driver plan: n = {n}, target = {target!r}, {len(jobs)} regions, {hours!r} h each, {int(piece)} s per piece'
+          print(msg)
+          if os.environ.get('GITHUB_STEP_SUMMARY'):
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as f:
+                  f.write(msg + '\n')
+
+  solve:
+    needs: plan
+    name: drive ${{ matrix.id }}
+    runs-on: ${{ needs.plan.outputs.runner }}
+    timeout-minutes: ${{ fromJSON(needs.plan.outputs.timeout) }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install solver
+        run: |
+          python -m pip install --upgrade pip
+          pip install "gurobipy>=13,<14"
+      - name: Refine region ${{ matrix.id }}
+        env:
+          N: ${{ needs.plan.outputs.n }}
+          TARGET: ${{ needs.plan.outputs.target }}
+          MINUTES: ${{ needs.plan.outputs.minutes }}
+          PIECE: ${{ needs.plan.outputs.piece_secs }}
+          ID: ${{ matrix.id }}
+          PREFIX: ${{ matrix.prefix }}
+        run: |
+          python - <<'PY'
+          import json, os
+          json.dump([{'case': 'boundary', 'reason': 'UNRESOLVED', 'region': json.loads(os.environ['PREFIX'])}],
+                    open('seed.json', 'w'))
+          PY
+          # exit code 1 = time budget reached or a region left open (normal); 3 = BETTER configuration (fails the job)
+          set +e
+          python tools/split_until_proved.py --seeds seed.json --under "$PREFIX" \
+            --out "out/$ID" --heil "$GITHUB_WORKSPACE" --piece-secs "$PIECE" --leaf-secs 600 --max-minutes "$MINUTES"
+          code=$?
+          set -e
+          tar -czf "driver_$ID.tgz" out
+          if [ "$code" = 3 ]; then echo "::error::BETTER_CONFIGURATION_FOUND in region $ID - verify with verify_config.py"; exit 1; fi
+          if [ "$code" != 0 ] && [ "$code" != 1 ]; then echo "::error::driver failed with exit code $code"; exit 1; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: driver-${{ matrix.id }}
+          path: driver_${{ matrix.id }}.tgz
+
+  summary:
+    needs: [plan, solve]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: driver-*
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unpack and summarise
+        run: |
+          mkdir -p results
+          for f in artifacts/*/*.tgz; do [ -f "$f" ] && tar -xzf "$f" -C results --strip-components=1; done
+          # keep result files, node descriptions and progress logs; drop the per-solve logs (they stay in the artifacts)
+          find results -name 'log_*.txt' -delete
+          if ! python summarize.py results --md summary.md; then
+            echo "::warning::summarize.py failed on these results; the raw files are still saved."
+            echo "summarize.py failed on this run; see the job log." > summary.md
+          fi
+          [ -f summary.md ] || echo "No result files found in this run." > summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: |
+            summary.md
+            results
+      - name: Save results to the 'results' branch
+        env:
+          RUN: ${{ github.run_number }}
+          N: ${{ needs.plan.outputs.n }}
+        run: |
+          D="results/driver-${RUN}-n${N}"
+          mkdir -p "/tmp/save/$D"
+          cp -r results/. "/tmp/save/$D/"
+          cp summary.md "/tmp/save/$D/"
+          rm -rf results summary.md artifacts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          saved=no
+          for attempt in 1 2 3 4 5; do
+            git fetch origin results || true
+            if git rev-parse --verify -q origin/results >/dev/null; then
+              git checkout -q -f -B results origin/results
+            elif git rev-parse --verify -q refs/heads/results >/dev/null; then
+              git checkout -q -f results
+            else
+              git checkout -q -f --orphan results
+              git rm -rf -q . || true
+            fi
+            mkdir -p results
+            cp -r /tmp/save/results/. results/
+            git add -f results
+            if git diff --cached --quiet; then
+              echo "Nothing new to commit."
+            else
+              git commit -q -m "Driver results of run ${RUN} (n=${N})"
+            fi
+            if git push origin results; then saved=yes; break; fi
+            echo "Push attempt $attempt failed; trying again."
+            sleep $((attempt * 10))
+          done
+          if [ "$saved" != yes ]; then
+            echo "::error::Could not save to the 'results' branch after 5 attempts. The files are in this run's 'summary' artifact."
+            exit 1
+          fi
