@@ -3,7 +3,7 @@ Read parameters from file gurobi.env
 Restricted license - for non-production use only - expires 2027-11-29
 Set parameter OutputFlag to value 1
 Set parameter Threads to value 4
-Set parameter TimeLimit to value 60
+Set parameter TimeLimit to value 300
 Set parameter MIPGap to value 5e-05
 Set parameter MIPFocus to value 2
 Set parameter NonConvex to value 2
@@ -14,7 +14,7 @@ CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|
 Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
 
 Non-default parameters:
-TimeLimit  60
+TimeLimit  300
 BestBdStop  2.7426211734693878e-02
 MIPGap  5e-05
 MIPFocus  2
@@ -88,21 +88,21 @@ H  871   748                       0.0000006    0.06374      -  27.1    0s
 * 1806  1263             105       0.0000007    0.05019      -  29.0    1s
 * 1808  1215             106       0.0000009    0.05019      -  28.9    1s
 * 1884  1239             106       0.0000009    0.05019      -  28.7    1s
- 10655  8049    0.03116   25   53    0.00000    0.03658      -  26.4    5s
- 33135 21484    0.00518   43   47    0.00000    0.03286      -  25.9   10s
-H34026 21986                       0.0000009    0.03283      -  25.9   10s
- 58242 37084    0.00029   62   45    0.00000    0.03148      -  26.8   15s
- 82397 52081    0.00269   47   39    0.00000    0.03050      -  27.1   20s
- 107122 67161    0.00134   55   38    0.00000    0.02996      -  26.9   25s
- 129523 80009    0.00591   39   42    0.00000    0.02951      -  26.8   30s
- 151636 92649    0.00051   49   32    0.00000    0.02913      -  26.6   35s
- 176161 107779    0.00000   64   13    0.00000    0.02884      -  26.7   40s
- 200097 122194    0.00508   36   50    0.00000    0.02853      -  26.7   45s
-H214271 130105                       0.0000010    0.02839      -  26.8   47s
-H215342 130926                       0.0000010    0.02838      -  26.8   48s
- 225748 137082    0.00008   58   50    0.00000    0.02829      -  26.9   50s
- 254503 154565    0.00000   84   35    0.00000    0.02805      -  27.1   55s
- 279691 170588    0.00384   38   50    0.00000    0.02785      -  27.2   60s
+ 16540 10916    0.00796   32   51    0.00000    0.03493      -  26.0    5s
+H34026 21986                       0.0000009    0.03283      -  25.9    8s
+ 41329 26709    0.00075   46   51    0.00000    0.03231      -  26.4   10s
+ 71217 45190     cutoff   37         0.00000    0.03089      -  27.1   15s
+ 98624 62198    0.00136   52   51    0.00000    0.03009      -  26.9   20s
+ 122512 76220    0.00969   38   50    0.00000    0.02965      -  26.9   25s
+ 151636 92649    0.00051   49   32    0.00000    0.02913      -  26.6   30s
+ 177612 108637    0.00618   40   50    0.00000    0.02882      -  26.6   35s
+ 206957 126255    0.02198   33   53    0.00000    0.02847      -  26.8   40s
+H214271 130105                       0.0000010    0.02839      -  26.8   41s
+H215342 130926                       0.0000010    0.02838      -  26.8   41s
+ 232049 140918    0.00394   55   51    0.00000    0.02823      -  27.0   45s
+ 261021 158913    0.00630   48   51    0.00000    0.02800      -  27.1   50s
+ 283405 172643     cutoff   61         0.00000    0.02782      -  27.2   55s
+ 310532 188548    0.00000   76   38    0.00000    0.02761      -  27.2   60s
 
 Cutting planes:
   Gomory: 21
@@ -112,11 +112,11 @@ Cutting planes:
   Relax-and-lift: 5
   BQP: 14
 
-Explored 280033 nodes (7612657 simplex iterations) in 60.00 seconds (67.57 work units)
+Explored 334680 nodes (9116331 simplex iterations) in 64.86 seconds (80.50 work units)
 Thread count was 4 (of 4 available processors)
 
 Solution count 10: 1.00977e-06 9.42886e-07 8.99211e-07 ... 3.10133e-09
 
-Time limit reached
-Best objective 1.009767996898e-06, best bound 2.785282667569e-02, gap 2758239.2186%
-{"verdict": "UNRESOLVED", "status": "TIME_LIMIT", "runtime": 60.00216603279114, "objval": 1.0097679968984474e-06, "objbound": 0.027852826675689512, "binaries": 38}
+Optimization achieved user objective limit
+Best objective 1.009767996898e-06, best bound 2.741933854596e-02, gap 2715309.7407%
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 64.85712885856628, "objval": 1.0097679968984474e-06, "objbound": 0.027419338545960775, "binaries": 38}
