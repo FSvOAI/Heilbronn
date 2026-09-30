@@ -3,7 +3,7 @@ Read parameters from file gurobi.env
 Restricted license - for non-production use only - expires 2027-11-29
 Set parameter OutputFlag to value 1
 Set parameter Threads to value 4
-Set parameter TimeLimit to value 60
+Set parameter TimeLimit to value 300
 Set parameter MIPGap to value 5e-05
 Set parameter MIPFocus to value 2
 Set parameter NonConvex to value 2
@@ -14,7 +14,7 @@ CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|
 Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
 
 Non-default parameters:
-TimeLimit  60
+TimeLimit  300
 BestBdStop  2.7426211734693878e-02
 MIPGap  5e-05
 MIPFocus  2
@@ -76,21 +76,20 @@ H    0     0                       0.0000000    0.07330      -     -    0s
      0     2    0.06250    0   59    0.00000    0.06250      -     -    0s
 * 1937  1371             118       0.0000008    0.05836      -  22.8    1s
 * 1942  1321             121       0.0000008    0.05836      -  22.8    1s
-H 3014  1723                       0.0000011    0.05447      -  23.4    2s
-H 3116  1737                       0.0000011    0.05447      -  22.9    2s
+H 3014  1723                       0.0000011    0.05447      -  23.4    1s
+H 3116  1737                       0.0000011    0.05447      -  22.9    1s
 H15116  8281                       0.0000015    0.03835      -  24.1    4s
- 15358  8673    0.00219   32   31    0.00000    0.03835      -  24.1    5s
- 39595 23252     cutoff   39         0.00000    0.03525      -  22.5   10s
- 66489 37922    0.00107   36   45    0.00000    0.03295      -  22.5   15s
- 93190 52141    0.01330   40   50    0.00000    0.03159      -  22.2   20s
- 122375 68472    0.00024   43   50    0.00000    0.03074      -  21.9   25s
- 147406 82991     cutoff   32         0.00000    0.03019      -  21.7   30s
- 176988 101516    0.00001   53   36    0.00000    0.02966      -  21.5   35s
- 208922 116885     cutoff   40         0.00000    0.02917      -  21.4   40s
- 241619 134006    0.00002   48   37    0.00000    0.02867      -  21.4   45s
- 275762 152631    0.00608   33   44    0.00000    0.02828      -  21.3   50s
- 304697 167932    0.00143   46   38    0.00000    0.02794      -  21.3   55s
- 335979 184531    0.01288   34   50    0.00000    0.02762      -  21.2   60s
+ 19130 11133    0.00188   35   54    0.00000    0.03753      -  23.7    5s
+ 46302 27571    0.00000  101   12    0.00000    0.03462      -  22.3   10s
+ 77545 44211     cutoff   37         0.00000    0.03238      -  22.2   15s
+ 110975 62156    0.02226   33   50    0.00000    0.03109      -  21.9   20s
+ 142238 80184    0.01068   30   45    0.00000    0.03030      -  21.7   25s
+ 176630 99018    0.00501   36   50    0.00000    0.02967      -  21.5   30s
+ 209279 117034    0.00035   46   50    0.00000    0.02916      -  21.4   35s
+ 240410 133393     cutoff   33         0.00000    0.02868      -  21.4   40s
+ 273574 151421     cutoff   44         0.00000    0.02831      -  21.3   45s
+ 306293 169123    0.00002   85   30    0.00000    0.02793      -  21.3   50s
+ 338198 185685    0.00054   39   31    0.00000    0.02760      -  21.2   55s
 
 Cutting planes:
   Gomory: 6
@@ -101,11 +100,11 @@ Cutting planes:
   Relax-and-lift: 4
   BQP: 9
 
-Explored 336241 nodes (7135198 simplex iterations) in 60.00 seconds (79.29 work units)
+Explored 358271 nodes (7578753 simplex iterations) in 58.08 seconds (84.11 work units)
 Thread count was 4 (of 4 available processors)
 
 Solution count 8: 1.45411e-06 1.07594e-06 1.05867e-06 ... -0
 
-Time limit reached
-Best objective 1.454108888092e-06, best bound 2.761723575877e-02, gap 1899154.9997%
-{"verdict": "UNRESOLVED", "status": "TIME_LIMIT", "runtime": 60.00219511985779, "objval": 1.4541088880919412e-06, "objbound": 0.027617235758772417, "binaries": 22}
+Optimization achieved user objective limit
+Best objective 1.454108888092e-06, best bound 2.742407331795e-02, gap 1885871.0949%
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 58.07842397689819, "objval": 1.4541088880919412e-06, "objbound": 0.02742407331795161, "binaries": 22}
