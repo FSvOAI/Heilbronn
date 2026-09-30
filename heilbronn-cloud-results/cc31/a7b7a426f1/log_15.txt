@@ -22,11 +22,11 @@ NodefileStart  6
 NonConvex  2
 Threads  4
 
-Optimize a model with 133 rows, 103 columns and 742 nonzeros (Max)
-Model fingerprint: 0x2a431aeb
+Optimize a model with 129 rows, 99 columns and 714 nonzeros (Max)
+Model fingerprint: 0xab6cf451
 Model has 1 linear objective coefficients
 Model has 50 quadratic constraints
-Variable types: 65 continuous, 38 integer (38 binary)
+Variable types: 65 continuous, 34 integer (34 binary)
 Coefficient statistics:
   Matrix range     [5e-01, 1e+00]
   QMatrix range    [1e+00, 1e+00]
@@ -37,29 +37,42 @@ Coefficient statistics:
 
 Found heuristic solution: objective -0.0000000
 Presolve time: 0.00s
-Presolved: 333 rows, 104 columns, 1142 nonzeros
+Presolved: 329 rows, 100 columns, 1114 nonzeros
 Presolved model has 50 bilinear constraint(s)
 
 Solving non-convex MIQCP to global optimality
 
-Variable types: 66 continuous, 38 integer (38 binary)
-Root relaxation presolve removed 68 rows and 10 columns
-Root relaxation presolved: 265 rows, 94 columns, 984 nonzeros
+Variable types: 66 continuous, 34 integer (34 binary)
+Root relaxation presolve removed 60 rows and 6 columns
+Root relaxation presolved: 269 rows, 94 columns, 1004 nonzeros
 
 
-Root relaxation: cutoff, 84 iterations, 0.00 seconds (0.00 work units)
+Root relaxation: objective 4.545455e-02, 139 iterations, 0.00 seconds (0.00 work units)
 
     Nodes    |    Current Node    |     Objective Bounds      |     Work
  Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
 
-     0     0     cutoff    0        -0.00000   -0.00000  0.00%     -    0s
+     0     0    0.04545    0   44   -0.00000    0.04545      -     -    0s
+     0     0    0.03571    0   50   -0.00000    0.03571      -     -    0s
+     0     0    0.03409    0   51   -0.00000    0.03409      -     -    0s
+     0     0    0.03125    0   49   -0.00000    0.03125      -     -    0s
+     0     0    0.03125    0   50   -0.00000    0.03125      -     -    0s
+     0     0    0.03125    0   50   -0.00000    0.03125      -     -    0s
+     0     0    0.03125    0   50   -0.00000    0.03125      -     -    0s
+     0     2    0.03125    0   50   -0.00000    0.03125      -     -    0s
 
-Explored 1 nodes (84 simplex iterations) in 0.03 seconds (0.02 work units)
+Cutting planes:
+  Gomory: 1
+  MIR: 1
+  Flow cover: 7
+  RLT: 23
+  BQP: 4
+
+Explored 3 nodes (291 simplex iterations) in 0.15 seconds (0.10 work units)
 Thread count was 4 (of 4 available processors)
 
 Solution count 1: -0 
-No other solutions better than -0
 
-Optimal solution found (tolerance 5.00e-05)
-Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
-{"verdict": "PROVED", "status": "OPTIMAL", "runtime": 0.034255027770996094, "objval": -0.0, "objbound": -0.0, "binaries": 38}
+Optimization achieved user objective limit
+Best objective -0.000000000000e+00, best bound 2.291429280875e-02, gap -
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 0.1459050178527832, "objval": -0.0, "objbound": 0.02291429280874501, "binaries": 34}
