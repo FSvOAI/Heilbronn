@@ -1,0 +1,95 @@
+Set parameter NodefileStart to value 6
+Read parameters from file gurobi.env
+Restricted license - for non-production use only - expires 2027-11-29
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 4
+Set parameter TimeLimit to value 60
+Set parameter MIPGap to value 5e-05
+Set parameter MIPFocus to value 2
+Set parameter NonConvex to value 2
+Set parameter BestBdStop to value 2.7426211734693878e-02
+Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Processor @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 4 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  60
+BestBdStop  2.7426211734693878e-02
+MIPGap  5e-05
+MIPFocus  2
+NodefileStart  6
+NonConvex  2
+Threads  4
+
+Optimize a model with 133 rows, 103 columns and 742 nonzeros (Max)
+Model fingerprint: 0xe4c954e2
+Model has 1 linear objective coefficients
+Model has 50 quadratic constraints
+Variable types: 65 continuous, 38 integer (38 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-01, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Found heuristic solution: objective -0.0000000
+Presolve time: 0.00s
+Presolved: 333 rows, 104 columns, 1142 nonzeros
+Presolved model has 50 bilinear constraint(s)
+
+Solving non-convex MIQCP to global optimality
+
+Variable types: 66 continuous, 38 integer (38 binary)
+Root relaxation presolve removed 68 rows and 10 columns
+Root relaxation presolved: 265 rows, 94 columns, 984 nonzeros
+
+
+Root relaxation: objective 7.142857e-02, 97 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    0.07143    0   53   -0.00000    0.07143      -     -    0s
+     0     0    0.07143    0   62   -0.00000    0.07143      -     -    0s
+     0     0    0.05901    0   63   -0.00000    0.05901      -     -    0s
+     0     0    0.05901    0   63   -0.00000    0.05901      -     -    0s
+     0     0    0.05882    0   60   -0.00000    0.05882      -     -    0s
+     0     0    0.05769    0   64   -0.00000    0.05769      -     -    0s
+     0     0    0.05769    0   65   -0.00000    0.05769      -     -    0s
+     0     0    0.05769    0   62   -0.00000    0.05769      -     -    0s
+     0     0    0.05733    0   63   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   59   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   58   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   67   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   63   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   62   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   62   -0.00000    0.05733      -     -    0s
+     0     0    0.05733    0   62   -0.00000    0.05733      -     -    0s
+     0     2    0.05733    0   58   -0.00000    0.05733      -     -    0s
+*  534   477              77       0.0000001    0.05556      -  22.1    0s
+H 1250   912                       0.0000003    0.05357      -  22.7    1s
+* 1851  1199              77       0.0000003    0.04470      -  23.7    1s
+H 2309  1324                       0.0000004    0.04470      -  25.8    1s
+H 8765  5656                       0.0000005    0.02911      -  30.3    4s
+H 8916  5587                       0.0000006    0.02911      -  30.4    4s
+
+Cutting planes:
+  Gomory: 3
+  Implied bound: 13
+  MIR: 8
+  Flow cover: 27
+  RLT: 81
+  Relax-and-lift: 8
+  BQP: 16
+
+Explored 12090 nodes (369780 simplex iterations) in 4.78 seconds (4.59 work units)
+Thread count was 4 (of 4 available processors)
+
+Solution count 7: 6.32212e-07 4.87854e-07 4.43359e-07 ... -0
+
+Optimization achieved user objective limit
+Best objective 6.322119710522e-07, best bound 2.725191684071e-02, gap -
+{"verdict": "PROVED", "status": "BOUND_REACHED", "runtime": 4.778953790664673, "objval": 6.322119710522324e-07, "objbound": 0.027251916840707543, "binaries": 38}
